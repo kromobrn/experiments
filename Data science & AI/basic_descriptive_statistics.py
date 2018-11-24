@@ -75,3 +75,37 @@ pop = np.array([1,2,3,4,5,6])
 print pop.mean(), ' ', pop.std()
 
 print pop.std() / 2**.5
+
+print 3.49 / 5 ** .5
+
+# -----------------------------------
+
+klout_scores = pd.read_csv('D:\\Source\\experiments\\Data science & AI\\Klout scores.csv', header=None)
+klout_scores.describe()
+klout_scores = klout_scores.iloc[:,0]
+klout_scores.mean() # 37.719054832538156
+klout_scores.std(ddof=0) # 16.036658421715316
+
+# Plot klout_scores
+plt.hist(klout_scores, bins=20)
+plt.show()
+
+# Plot means of 100 random samples of size 35
+import random
+samples = pd.DataFrame()
+for i in range(100):
+    sample = random.sample(klout_scores.values, 35)
+    samples['Sample ' + str(i+1)] = sample
+pass
+samples.head()
+samples.describe()
+
+sample_means = samples.apply(lambda a: a.mean())
+sample_means.describe() 
+
+plt.hist(sample_means, bins='auto')
+plt.show()
+
+
+
+
