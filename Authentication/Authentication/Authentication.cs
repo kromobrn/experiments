@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Qualyteam.g0y.Hashing;
+using QualyFeroz.g0y.Hashing;
 
-namespace Qualyteam.g0y.Authentication
+namespace QualyFeroz.g0y.Authentication
 {
     /* 
         authenticator
@@ -19,62 +19,49 @@ namespace Qualyteam.g0y.Authentication
         public string Password;
     }
 
-    public abstract class AuthCommand { } // FingerPrintAuthCommand, QRCodeAuthCommand
-
-    public class UserAndPasswordAuthCommand : AuthCommand
+    public class LoginRequest
     {
         public string Username { get; private set; }
         public string Password { get; private set; }
+        public string IpAddress { get; private set; }
 
-        public UserAndPasswordAuthCommand(string username, string password)
+        public LoginRequest(string username, string password, string ipAddress)
         {
             Username = username;
             Password = password;
+            IpAddress = ipAddress;
         }
-
     }
+
 
     public interface IAuthenticator
     {
         bool Authenticate();
     }
 
-    public interface IAuthenticator<T> where T : AuthCommand
-    {
-        bool Authenticate(User user, T authCommand);
-    }
-
-    //public class HashAuthenticator : IAuthenticator<AuthCommand>
-    //{
-    //    private readonly IUserService _userService;
-    //    private readonly IHasher _hasher;
-
-    //    public HashAuthenticator(IUserService userService, IHasher hasher)
-    //    {
-    //        _userService = userService;
-    //        _hasher = hasher;
-    //    }
-
-    //    public bool Authenticate(User user, AuthCommand authCommand)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
-
-    public class UsernameAndPasswordAuthenticator : IAuthenticator<UserAndPasswordAuthCommand>
+    public class UserLoginAuthenticator : IAuthenticator
     {
         private readonly IUserService _userService;
         private readonly IHasher _hasher;
 
-        public UsernameAndPasswordAuthenticator(IUserService userService, IHasher hasher)
+        public UserLoginAuthenticator(IUserService userService, IHasher hasher)
         {
             _userService = userService;
             _hasher = hasher;
         }
 
-        public bool Authenticate(User user, UserAndPasswordAuthCommand cmd)
+        public bool Authenticate(LoginRequest loginRequest)
         {
-            return _hasher.Hash(cmd.Password).Equals(user.Password, StringComparison.OrdinalIgnoreCase);
+            var user = _userService.FindByUsername(username);
+
+            if (user == null || !user.Active)
+            {
+                return false;
+            }
+
+            return _hasher
+                .Hash(loginRequest.Password)
+                .Equals(user.Password, StringComparison.OrdinalIgnoreCase);
         }
     }
 
@@ -186,6 +173,11 @@ namespace Qualyteam.g0y.Authentication
 
     public class UserCredentialStrategy : IAuthenticator
     {
+        public bool Authenticate()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool CanAuthenticate(User user, string passwordHash)
         {
             return user.Password.Equals(passwordHash, StringComparison.OrdinalIgnoreCase);

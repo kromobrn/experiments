@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Qualyteam.g0y.Hashing
+namespace QualyFeroz.g0y.Hashing
 {
     public interface IHasher
     {
