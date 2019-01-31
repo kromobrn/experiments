@@ -183,4 +183,9 @@ def lesson_6_quiz_32():
     
     # Students will make on average around 4 to 1 fewer typos on the qwerty
 
-lesson_6_quiz_32();
+''' Lesson 7 | Probelm Set 10a '''
+
+t_crit = st.t.ppf(.95, df=999)
+
+Sd = ((1.2**2)+(2.7**2))**.5
+t = (9-0)/(Sd/(1000**.5))
