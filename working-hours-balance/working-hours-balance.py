@@ -2,10 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
 SHEET_URL = r'https://docs.google.com/spreadsheets/d/<ID>/edit#gid=0'
-WEEKLY_TARGET_HOURS = 42.5
-
+BUSINESS_DAY_DEFAULT_TARGET_HOURS = 8.5
 
 
 def df_from_google_sheet(url):
@@ -23,6 +21,9 @@ sheet_data = df_from_google_sheet(SHEET_URL)
 # Set 'Data' column as the index
 sheet_data['Data'] = pd.to_datetime(sheet_data['Data'], dayfirst=True)
 sheet_data.set_index('Data', inplace=True)
+
+# Get target hours override for holidays and alike
+target_hours_override = sheet_data['Horas requeridas']
 
 # Get separated dataframes for Start and End times
 start_times = sheet_data.filter(regex='^[Ii]n[ií]cio.*$').apply(pd.to_datetime)
@@ -42,10 +43,13 @@ performance = pd.DataFrame({
     'working_time': daily_working_time,
     'cum_working_hours': cum_hours_of_working_time })
 
-# Set target working hours of each day
+# Set target working hours' default value for each day
 performance['target_working_hours'] = 0
 performance.loc[performance.index.dayofweek<5, 
-                'target_working_hours'] = WEEKLY_TARGET_HOURS/5.0
+                'target_working_hours'] = BUSINESS_DAY_DEFAULT_TARGET_HOURS
+
+# Override target working hours with user specified values (if any)
+performance['target_working_hours'].update(target_hours_override)
 
 # Cumulative target working hours
 performance['cum_target_working_hours'] = performance['target_working_hours'].cumsum()
@@ -57,7 +61,7 @@ balance = (performance['cum_working_hours'].tail(1)
 ### Plotting ###
 
 # Filter the last 7 [or less] days to plot
-index_of_last_filled_row = sheet_data.dropna().tail(1).index[0]
+index_of_last_filled_row = sheet_data.dropna(thresh=4).tail(1).index[0]
 last_week_performance = performance.loc[:index_of_last_filled_row].tail(7)
 
 # Get suitable representation for each day -- 'Fri (2019-01-01)'
