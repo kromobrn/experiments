@@ -183,8 +183,19 @@ def lesson_6_quiz_32():
     
     # Students will make on average around 4 to 1 fewer typos on the qwerty
 
-''' Lesson 7 | Probelm Set 10a '''
+''' Lesson 7 | Problem Set 10a '''
 
-t_crit = st.t.ppf(.95, df=999)
+# t_crit = st.t.ppf(.95, df=999)
+# Sd = ((1.2**2)+(2.7**2))**.5 = (9-0)/(Sd/(1000**.5)))
 
-Sd = ((1.2**2)+(2.7**2))**.5t = (9-0)/(Sd/(1000**.5)))
+''' Lesson 8 | t-Tests Part 2 '''
+
+# t_05 = st.t.ppf(.05, df=24) # -1.7108820799094282
+# t = -25/10 # -2.5
+# p = st.t.cdf(-2.5, df=24) # 0.009827087558289377
+# d = -25/50 # -0.5
+# r2 = t**2/((t**2)+24) # 0.2066115702479339
+
+# t_025 = st.t.ppf(.025, df=24) # -2.063898561628021
+# margin_of_error = abs(t_025 * 10) # 20.63898561628021
+# CI = (126-margin_of_error, 126+margin_of_error) # (105.36101438371979, 146.6389856162802)
