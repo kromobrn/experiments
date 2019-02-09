@@ -2,14 +2,27 @@ using System;
 
 namespace Vinculos.Vinculo
 {
+    public class FabricaDeVinculos
+    {
+        public IEnumerable<IVinculo> GetVinculos(IVinculavel vinculavel)
+        {
+
+        }
+    }
+    
     public interface IVinculo
     {
-        void PermiteInativar();
-        void PermiteExcluir();
+        IFonteDeVinculos Fonte;
+        IVinculavel ItemVinculado;
+        
+        bool PermiteInativacao();
+        bool PermiteExclusao();
     }
-    public class VinculoRemovivel : IVinculo { }
-    public class Pendencia : IVinculo { }
-    public class Dependencia : IVinculo { }
+
+    public abstract class Vinculo : IVinculo { }
+    public class VinculoRemovivel : Vinculo { }
+    public class Pendencia : Vinculo { }
+    public class Dependencia : Vinculo { }
 
     public interface IFonteDeVinculos { }
     public class RNC : IFonteDeVinculos { }
