@@ -183,19 +183,176 @@ def lesson_6_quiz_32():
     
     # Students will make on average around 4 to 1 fewer typos on the qwerty
 
-''' Lesson 7 | Problem Set 10a '''
+def lesson_7_quiz_X():
+    ''' 
+    Lesson 7 | Problem Set 10a 
+    '''
 
-# t_crit = st.t.ppf(.95, df=999)
-# Sd = ((1.2**2)+(2.7**2))**.5 = (9-0)/(Sd/(1000**.5)))
+    # t_crit = st.t.ppf(.95, df=999)
+    # Sd = ((1.2**2)+(2.7**2))**.5 = (9-0)/(Sd/(1000**.5)))
+    pass
 
-''' Lesson 8 | t-Tests Part 2 '''
+def lesson_8_quiz_X():
+    ''' 
+    Lesson 8 | t-Tests Part 2 
+    '''
 
-# t_05 = st.t.ppf(.05, df=24) # -1.7108820799094282
-# t = -25/10 # -2.5
-# p = st.t.cdf(-2.5, df=24) # 0.009827087558289377
-# d = -25/50 # -0.5
-# r2 = t**2/((t**2)+24) # 0.2066115702479339
+    # t_05 = st.t.ppf(.05, df=24) # -1.7108820799094282
+    # t = -25/10 # -2.5
+    # p = st.t.cdf(-2.5, df=24) # 0.009827087558289377
+    # d = -25/50 # -0.5
+    # r2 = t**2/((t**2)+24) # 0.2066115702479339
 
-# t_025 = st.t.ppf(.025, df=24) # -2.063898561628021
-# margin_of_error = abs(t_025 * 10) # 20.63898561628021
-# CI = (126-margin_of_error, 126+margin_of_error) # (105.36101438371979, 146.6389856162802)
+    # t_025 = st.t.ppf(.025, df=24) # -2.063898561628021
+    # margin_of_error = abs(t_025 * 10) # 20.63898561628021
+    # CI = (126-margin_of_error, 126+margin_of_error) # (105.36101438371979, 146.6389856162802)
+    pass
+
+def lesson_10_quiz_3():
+    ''' 
+    Quiz 3 | Meal Prices
+    '''
+    # Ho: µ(gettysburg) = µ(wilma)
+    # Ha: µ(gettysburg) ≠ µ(wilma)
+
+    sheet_url = r'https://docs.google.com/spreadsheets/d/1bNeiNwHKgTbg-6h_ahFuDUd_TkVWDuIrTvELAvcKzUc'
+    df = df_from_google_sheet_url(sheet_url)
+
+    gettysburg_data, wilma_data = df.iloc[:,0], df.iloc[:,1]
+    gettysburg_data.dropna(inplace=True)
+    wilma_data.dropna(inplace=True)
+
+    gettysburg_data.describe() # mean = 8.944444, std = 2.645134
+    wilma_data.describe() # mean = 11.142857, std = 2.178819
+
+    se = (gettysburg_data.var() / gettysburg_data.size
+            + wilma_data.var() / wilma_data.size) ** .5
+    # 0.8531100847677228
+
+    mean_diff = gettysburg_data.mean() - wilma_data.mean() # -2.1984126984126977
+    t = mean_diff / se # -2.576939058235681
+
+    alpha = .05
+    two_tailed = True
+    df = gettysburg_data.size + wilma_data.size - 2
+
+    # In a two tailed test the probability is split between both extremes
+    prob = alpha if not two_tailed else alpha * .5
+
+    t_crit = st.t.ppf(prob, df=df)
+    # -2.042272456301238
+
+    # |-2.576939058235681| > |-2.042272456301238| Null rejected
+
+    # Probability of getting a sample under the lower (left) critical region
+    p = st.t.cdf(t, df=df)
+
+    p = p if not two_tailed else p * 2
+    # 0.01512946515275134
+    print('alpha={}, {}-tailed'.format(alpha, 'two' if two_tailed else 'one'))
+    print('t({})={}, p={}'.format(df, t, p))
+    pass
+
+def lesson_10_quiz_12():
+    ''' 
+    Quiz 12 | Acne Medication
+    '''
+    # Ho: µ(a) = µ(b)
+    # Ha: µ(a) ≠ µ(b)
+
+    drug_a = pd.Series([.4, .36, .2, .32, .45, .28])
+    drug_b = pd.Series([.41, .39, .18, .23, .35])
+
+    two_tailed = True
+    alpha = .05
+    df = drug_a.size + drug_b.size - 2
+
+    mean_diff = drug_a.mean() - drug_b.mean()
+    se = (drug_a.var() / drug_a.size
+        + drug_b.var() / drug_b.size) ** .5
+
+    t = mean_diff / se
+
+    prob = alpha if not two_tailed else alpha * .5
+    t_critical = st.t.ppf(prob, df=df)
+
+    p = 1 - st.t.cdf(t, df=df)
+    p = p if not two_tailed else p * 2
+
+    print('alpha={}, {}-tailed'.format(alpha, 'two' if two_tailed else 'one'))
+    print('t({})={}, p={}'.format(df, t, p))
+
+    # Null retained (|0.39547554497329196| <= |-2.262157162740992|)
+    # The two drugs have not a significant difference in ther effects on acne
+    pass
+
+def lesson_10_quiz_16():
+    ''' 
+    Quiz 16 | Who Has More Shoes
+    '''
+    # Ho: µ(f) = µ(m)    --    µ(f) - µ(m) = 0
+    # Ha: µ(f) ≠ µ(m)
+
+    females = pd.Series([90, 28, 30, 10, 5, 9, 60])
+    males = pd.Series([4, 120, 5, 3, 10, 3, 5, 13, 4, 10, 21])
+
+    females.describe()
+    males.describe()
+
+    two_tailed = True
+    alpha = .05
+    df = females.size + males.size - 2
+
+    mean_diff = females.mean() - males.mean()
+    se = (females.var() / females.size
+            + males.var() / males.size) ** .5
+
+    t = mean_diff / se
+
+    prob = alpha if not two_tailed else alpha * .5
+    t_critical = st.t.ppf(prob, df=df)
+
+    # Null retained (|0.9629743503795974| < |-2.1199052992210112|)
+    # No significant difference in the number of pairs of shoes owned by females and males
+
+    margin_of_error = abs(t_critical) * se
+    ci = (mean_diff - margin_of_error, mean_diff + margin_of_error)
+    # (-18.192841871177293, 48.478556156891585)
+    # 95% interval for the TRUE difference between pairs of shoes owned by females and males
+
+    r2 = (t ** 2) / ((t ** 2) + df)
+    # 0.05478242400037163
+    # Only about 5% of the difference in pairs of shoes ownred can be attributed to gender
+    pass
+
+def lesson_10_quiz_23():
+    '''
+    Quiz 23 | Pooled Variance
+    '''
+    x = pd.Series([5, 6, 1, -4])
+    y = pd.Series([3, 7, 8])
+
+    # Can also be done with (x.var(ddof=0) * x.size)
+    x_ss = ((x - x.mean()) ** 2).sum()
+    y_ss = ((y - y.mean()) ** 2).sum()
+
+    x_df = x.size - 1
+    y_df = y.size - 1
+
+    pooled_var = (x_ss + y_ss) / (x_df + y_df)
+
+    se = (pooled_var / x.size + pooled_var / y.size) ** .5
+
+    mean_diff = x.mean() - y.mean()
+    t = mean_diff / se
+
+    two_tailed = True
+    alpha = .05
+
+    prob = alpha if not two_tailed else alpha * .5
+
+    t_critical = st.t.ppf(prob, df=(x_df + y_df))
+
+    print('Null {}'.format('rejected' if abs(t) > abs(t_critical) else 'retained'))
+    pass
+
