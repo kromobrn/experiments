@@ -332,7 +332,6 @@ def lesson_10_quiz_23():
     x = pd.Series([5, 6, 1, -4])
     y = pd.Series([3, 7, 8])
 
-    # Can also be done with (x.var(ddof=0) * x.size)
     x_ss = ((x - x.mean()) ** 2).sum()
     y_ss = ((y - y.mean()) ** 2).sum()
 
@@ -354,5 +353,30 @@ def lesson_10_quiz_23():
     t_critical = st.t.ppf(prob, df=(x_df + y_df))
 
     print('Null {}'.format('rejected' if abs(t) > abs(t_critical) else 'retained'))
+    pass
+
+def lesson_11_quiz_X():
+    # mean_x = 12
+    # mean_y = 8
+
+    # n_x = 52
+    # n_y = 57
+    # var = 5.1
+
+    # alpha = .05
+    # two_tailed = True
+    # exp_diff = 3
+    # df = n_x + n_y - 2
+
+    # prob = alpha if not two_tailed else alpha * .5
+    # t_crit = st.t.ppf(prob, df=df)
+
+    # s = var ** .5
+    # mean_diff = (mean_x - mean_y) - exp_diff
+    # SE = s * (1/n_x + 1/n_y) ** .5
+    # # SE = (var/n_x + var/n_y) ** .5
+    # t = mean_diff / SE
+
+    # st.ttest_ind([39, 45, 48, 60], [65, 45, 32, 38])
     pass
 
