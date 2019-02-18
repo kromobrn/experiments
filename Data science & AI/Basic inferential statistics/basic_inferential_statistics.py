@@ -380,3 +380,86 @@ def lesson_11_quiz_X():
     # st.ttest_ind([39, 45, 48, 60], [65, 45, 32, 38])
     pass
 
+def lesson_12_quiz_X():
+    '''
+    Lesson 12 | One-Way ANOVA
+    '''
+
+    df = pd.DataFrame({
+        "snapzi": np.array([15, 12, 14, 11]),
+        "irisa": np.array([39, 45, 48, 60]),
+        "lolamoon": np.array([65, 45, 32, 38])
+    })
+
+    # Grand mean. 'df.mean().mean()' also works as all samples have same size
+    df.values.flatten().mean()
+    # 35.333333333333336
+
+    # F = mst/mse = (sst/dft) / (sse/dfe)
+
+    def sst(samples):
+        '''
+        Calculates the Sum of Squares of Treatment/Group/Samples
+        '''
+        gmean = samples.flatten().mean()
+
+        def squared_deviation_from_gmean(sample):
+            return (sample.mean() - gmean) ** 2
+
+        def func(sample):
+            return sample.size * squared_deviation_from_gmean(sample)
+        
+        return np.apply_along_axis(func, axis=1, arr=samples).sum()
+
+    def sse(samples):
+        '''
+        Calculates the Sum of Squares of Treatment/Group/Samples
+        '''
+        def squared_deviation_from_mean(subject, sample_mean):
+            return (subject - sample_mean) ** 2
+
+        def func(sample):
+            return np.apply_along_axis(
+                squared_deviation_from_mean, 0, sample, sample.mean()
+            )
+
+        return np.apply_along_axis(func, axis=1, arr=samples).sum()
+
+    def dft(samples):
+        return samples.shape[0] - 1
+
+    def dfe(samples):
+        return samples.size - samples.shape[0]
+
+    def mst(samples):
+        return sst(samples) / dft(samples)
+
+    def mse(samples):
+        return sse(samples) / dfe(samples)
+
+    def f_statistic(samples):
+        return mst(samples) / mse(samples)
+
+    samples = df.values.T
+
+    sst(samples) # 3010.666666666667
+    sse(samples) # 862.0
+
+    dft(samples) # 2
+    dfe(samples) # 9
+
+    mst(samples) # 1505.3333333333335
+    mse(samples) # 95.77777777777777
+
+    f_statistic(samples) # 15.716937354988401
+
+    # f_critical value
+    st.f.ppf(1 - .05, dfn=2, dfd=9) # 4.25649472909375
+
+    # p_value
+    1 - st.f.cdf(15.716937354988401, dfn=2, dfd=9)
+    # 0.0011580762838382386
+
+    st.f_oneway(samples[0], samples[1], samples[2])
+    # (statistic=15.716937354988401, pvalue=0.0011580762838382535)
+
