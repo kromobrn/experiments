@@ -26,7 +26,6 @@ import matplotlib.pyplot as plt
 # print(230/5**.5) # 102.85912696499032
 # print((9640-7895)/102.85912696499032) # 16.964950524944058
 
-''' Lesson 6 | t-Tests Part 1 '''
 
 def df_from_google_sheet_url(url):
     export_attr = '/export?gid=0&format=csv'
@@ -59,6 +58,49 @@ def plot_t_dist(degrees_of_freedom):
     )
 
     plt.legend(loc='upper left')
+
+def sst(samples):
+    '''
+    Calculates the Sum of Squares of Treatment/Group/Samples
+    '''
+    gmean = samples.flatten().mean()
+
+    def squared_deviation_from_gmean(sample):
+        return (sample.mean() - gmean) ** 2
+
+    def func(sample):
+        return sample.size * squared_deviation_from_gmean(sample)
+    
+    return np.apply_along_axis(func, axis=1, arr=samples).sum()
+
+def sse(samples):
+    '''
+    Calculates the Sum of Squares of Treatment/Group/Samples
+    '''
+    def squared_deviation_from_mean(subject, sample_mean):
+        return (subject - sample_mean) ** 2
+
+    def func(sample):
+        return np.apply_along_axis(
+            squared_deviation_from_mean, 0, sample, sample.mean()
+        )
+
+    return np.apply_along_axis(func, axis=1, arr=samples).sum()
+
+def dft(samples):
+    return samples.shape[0] - 1
+
+def dfe(samples):
+    return samples.size - samples.shape[0]
+
+def mst(samples):
+    return sst(samples) / dft(samples)
+
+def mse(samples):
+    return sse(samples) / dfe(samples)
+
+def f_statistic(samples):
+    return mst(samples) / mse(samples)
 
 def lesson_6_quiz_16():
     '''
@@ -207,6 +249,23 @@ def lesson_8_quiz_X():
     # margin_of_error = abs(t_025 * 10) # 20.63898561628021
     # CI = (126-margin_of_error, 126+margin_of_error) # (105.36101438371979, 146.6389856162802)
     pass
+
+def lesson_9_quiz_X():
+    pre = np.array([8, 7, 6, 9, 10, 5, 7, 11, 8, 7])
+    pos = np.array([5, 6, 4, 6, 5, 3, 2, 9, 4, 4])
+    diff = pos - pre
+
+    tc = st.t.ppf(.05, df=9)
+
+    se = diff.std(ddof=1) / diff.size ** .5
+
+    t = diff.mean() / se
+    d = diff.mean() / diff.std(ddof=1)
+
+    tc = st.t.ppf(.025, df=9)
+    margin_of_error = abs(tc * se)
+    ci = (diff.mean() - margin_of_error, diff.mean() + margin_of_error)
+    r2 = (t ** 2) / ((t ** 2) + 9)
 
 def lesson_10_quiz_3():
     ''' 
@@ -397,49 +456,6 @@ def lesson_12_quiz_X():
 
     # F = mst/mse = (sst/dft) / (sse/dfe)
 
-    def sst(samples):
-        '''
-        Calculates the Sum of Squares of Treatment/Group/Samples
-        '''
-        gmean = samples.flatten().mean()
-
-        def squared_deviation_from_gmean(sample):
-            return (sample.mean() - gmean) ** 2
-
-        def func(sample):
-            return sample.size * squared_deviation_from_gmean(sample)
-        
-        return np.apply_along_axis(func, axis=1, arr=samples).sum()
-
-    def sse(samples):
-        '''
-        Calculates the Sum of Squares of Treatment/Group/Samples
-        '''
-        def squared_deviation_from_mean(subject, sample_mean):
-            return (subject - sample_mean) ** 2
-
-        def func(sample):
-            return np.apply_along_axis(
-                squared_deviation_from_mean, 0, sample, sample.mean()
-            )
-
-        return np.apply_along_axis(func, axis=1, arr=samples).sum()
-
-    def dft(samples):
-        return samples.shape[0] - 1
-
-    def dfe(samples):
-        return samples.size - samples.shape[0]
-
-    def mst(samples):
-        return sst(samples) / dft(samples)
-
-    def mse(samples):
-        return sse(samples) / dfe(samples)
-
-    def f_statistic(samples):
-        return mst(samples) / mse(samples)
-
     samples = df.values.T
 
     sst(samples) # 3010.666666666667
@@ -462,4 +478,23 @@ def lesson_12_quiz_X():
 
     st.f_oneway(samples[0], samples[1], samples[2])
     # (statistic=15.716937354988401, pvalue=0.0011580762838382535)
+
+def lesson_13_quiz_X():
+    df = pd.DataFrame({
+        "singles": np.array([8, 7, 10, 6, 9]),
+        "twins":  np.array([4, 6, 7, 4, 9]),
+        "triplets": np.array([4, 4, 7, 2, 3])
+    })
+
+    samples = df.values.T
+
+    sst(samples) # 40
+    sse(samples) # 42
+    dft(samples) # 2
+    dfe(samples) # 12
+    mst(samples) # 20
+    mse(samples) # 3.5
+    f_statistic(samples) # 5.714285714285714
+
+    st.f.ppf(1-.05, dfn=2, dfd=12) # 3.8852938346523933
 
