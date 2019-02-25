@@ -59,31 +59,39 @@ def plot_t_dist(degrees_of_freedom):
 
     plt.legend(loc='upper left')
 
+def dropna(ndarray):
+    return ndarray[~np.isnan(ndarray)]
+
 def sst(samples):
     '''
-    Calculates the Sum of Squares of Treatment/Group/Samples
+    Calculates the Sum of Squares of Treatment/Group/Samples (Between)
     '''
-    gmean = samples.flatten().mean()
+    gmean = dropna(samples.flatten()).mean()
 
     def squared_deviation_from_gmean(sample):
-        return (sample.mean() - gmean) ** 2
+        return (dropna(sample).mean() - gmean) ** 2
 
     def func(sample):
-        return sample.size * squared_deviation_from_gmean(sample)
+        s = dropna(sample)
+        return s.size * squared_deviation_from_gmean(s)
     
     return np.apply_along_axis(func, axis=1, arr=samples).sum()
 
 def sse(samples):
     '''
-    Calculates the Sum of Squares of Treatment/Group/Samples
+    Calculates the Sum of Squares of Error (Within)
     '''
     def squared_deviation_from_mean(subject, sample_mean):
         return (subject - sample_mean) ** 2
 
     def func(sample):
-        return np.apply_along_axis(
-            squared_deviation_from_mean, 0, sample, sample.mean()
+        s = dropna(sample)
+        sum_sqrs = np.apply_along_axis(
+            squared_deviation_from_mean, 0, s, s.mean()
         )
+        ret = np.zeros(sample.size)
+        ret[:s.size] = sum_sqrs
+        return ret
 
     return np.apply_along_axis(func, axis=1, arr=samples).sum()
 
@@ -91,7 +99,7 @@ def dft(samples):
     return samples.shape[0] - 1
 
 def dfe(samples):
-    return samples.size - samples.shape[0]
+    return dropna(samples).size - samples.shape[0]
 
 def mst(samples):
     return sst(samples) / dft(samples)
@@ -497,4 +505,61 @@ def lesson_13_quiz_X():
     f_statistic(samples) # 5.714285714285714
 
     st.f.ppf(1-.05, dfn=2, dfd=12) # 3.8852938346523933
+
+def lesson_14_quiz_1():
+    '''
+    Lesson 14 | ANOVA, Continued
+    '''
+
+    df = pd.DataFrame({
+        "Food A": np.array([2, 4, 3]),
+        "Food B":  np.array([6, 5, 7]),
+        "Food C": np.array([8, 9, 10])
+    })
+
+    gmean = df.values.flatten().mean() # 6
+    df.mean() # 3, 6, 9
+
+    samples = df.values.T
+    sst(samples) # 54.0
+    sse(samples) # 6.0
+    dft(samples) # 2.0
+    dfe(samples) # 6.0
+    mst(samples) # 27.0
+    mse(samples) # 1.0
+    f_statistic(samples) # 27.0
+    st.f.ppf(1-.05, dfn=2, dfd=6) # 5.143252849784718
+
+    ((samples - gmean) ** 2).flatten().sum() # 60
+
+    q = 4.34
+    tukeys_hsd = q * ((1 / 3) ** .5)
+
+def lesson_14_quiz_22():
+    '''
+    Lesson 14 | ANOVA, Continued
+    '''
+    df = pd.DataFrame({
+    "Placebo": np.array([1.5, 1.3, 1.8, 1.6, 1.3, np.nan, np.nan]),
+    "Drug 1": np.array([1.6, 1.7, 1.9, 1.2, np.nan, np.nan, np.nan]),
+    "Drug 2": np.array([2.0, 1.4, 1.5, 1.5, 1.8, 1.7, 1.4]),
+    "Drug 3": np.array([2.9, 3.1, 2.8, 2.7, np.nan, np.nan, np.nan])
+    })
+
+    samples = df.values.T
+
+    gmean = dropna(samples.flatten()).mean() 
+    # 1.8350000000000002
+
+    sst(samples) # 5.449428571428573
+    sse(samples) # 1.0329464285714287
+    dft(samples) # 3
+    dfe(samples) # 16
+    mst(samples) # 1.816476190476191
+    mse(samples) # 0.05225446428571429
+    f_statistic(samples) # 34.7621244482415
+
+    eta2 = sst(samples) / (sst(samples) + sse(samples))
+    # 0.8669841017307408
+
 
