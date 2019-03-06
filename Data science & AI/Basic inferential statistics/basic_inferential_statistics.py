@@ -562,4 +562,36 @@ def lesson_14_quiz_22():
     eta2 = sst(samples) / (sst(samples) + sse(samples))
     # 0.8669841017307408
 
+def lesson_15_quiz_17():
+    '''
+    Lesson 15 | Problem Set 13
+    '''
+
+    st.f.ppf(.95, dfn=3, dfd=15)
+    st.f.ppf(.95, dfn=2, dfd=50)
+
+    df = pd.DataFrame({
+        "short": np.array([-8, -11, -17, -9, -10, -5, np.nan]),
+        "long": np.array([12, 9, 16, 8, 15, np.nan, np.nan]),
+        "normal": np.array([.5, 0, -1, 1.5, .5, -.1, 0]),
+    })
+
+    samples = df.values.T
+
+    dropna(samples.flatten()).mean() 
+    # 0.07777777777777778
+
+    sst(samples) # 1320.171111111111
+    sse(samples) # 133.48
+    dft(samples) # 2
+    dfe(samples) # 15
+    mst(samples) # 660.0855555555555
+    mse(samples) # 8.898666666666665
+    f_statistic(samples) # 74.1780291679153
+
+    st.f.ppf(.95, dfn=2, dfd=15)
+    # 3.6823203436732412
+
+    sst(samples) / (sst(samples) + sse(samples))
+    # 0.908176041018554
 
