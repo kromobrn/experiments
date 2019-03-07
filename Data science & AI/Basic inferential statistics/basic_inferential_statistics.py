@@ -595,3 +595,19 @@ def lesson_15_quiz_17():
     sst(samples) / (sst(samples) + sse(samples))
     # 0.908176041018554
 
+df = df_from_google_sheet_url(
+    'https://docs.google.com/spreadsheets/d/'
+    '1jMLcMJkVb_lUo5SSyI30lD9rBvtGreZZ2fWKC7dBtOk')
+
+plt.subplot(211)
+plt.scatter(df['age'], df['party'], label='Time arrived at a party')
+plt.legend()
+plt.subplot(212)
+plt.scatter(df['age'], df['pets'], label='Pets owned')
+plt.legend()
+plt.show()
+
+np.corrcoef(df['age'].values, df['party'].values)
+np.corrcoef(df['age'].values, df['pets'].values)    
+
+st.t.ppf(.975, df=23)
