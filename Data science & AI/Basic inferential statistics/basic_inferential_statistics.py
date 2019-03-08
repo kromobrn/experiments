@@ -596,6 +596,9 @@ def lesson_15_quiz_17():
     # 0.908176041018554
 
 def lesson_16_quiz_X():
+    '''
+    Lesson 16 | Correlation
+    '''
 
     df = df_from_google_sheet_url(
         'https://docs.google.com/spreadsheets/d/'
@@ -626,4 +629,40 @@ def lesson_16_quiz_X():
 
     st.pearsonr(df['age'].values, df['pets'].values)
     # (0.23148091642148155, 0.07025500392476225)
+
+def lesson_17_quiz_X():
+    '''
+    Lesson 17 | Problem Set 14
+    '''
+    df = df_from_google_sheet_url(
+        'https://docs.google.com/spreadsheets/d/'
+        '1-M8kS83yoBG6PalNgisDDOxra-LxZbwa1Lh1K4F37pI')
+
+    df.describe()
+
+    written = df.iloc[:,0]
+    remembered = df.iloc[:,1]
+
+    st.pearsonr(written, remembered)
+    # (0.9541449326178455, 1.21549579554e-07)
+
+    df = df_from_google_sheet_url(
+        'https://docs.google.com/spreadsheets/d/'
+        '1RtrwJ7o9EwDayNl_o0UrqcnCkH9ICc1ZpieHtgZcWhg')
+
+    df.describe()
+
+    animal = df.iloc[:,0]
+    gestation = df.iloc[:,1]
+    longevity = df.iloc[:,2]
+
+    plt.scatter(gestation, longevity, marker='v')
+    plt.xlabel('Gestation')
+    plt.ylabel('Longevity')
+    plt.show()
+
+    r, p = st.pearsonr(gestation, longevity)
+    # (0.5893126939325756, 6.309895087810683e-05)
+
+    r**2 # 0.3472894512300695
 
