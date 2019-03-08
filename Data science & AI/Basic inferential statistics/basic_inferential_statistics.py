@@ -595,19 +595,35 @@ def lesson_15_quiz_17():
     sst(samples) / (sst(samples) + sse(samples))
     # 0.908176041018554
 
-df = df_from_google_sheet_url(
-    'https://docs.google.com/spreadsheets/d/'
-    '1jMLcMJkVb_lUo5SSyI30lD9rBvtGreZZ2fWKC7dBtOk')
+def lesson_16_quiz_X():
 
-plt.subplot(211)
-plt.scatter(df['age'], df['party'], label='Time arrived at a party')
-plt.legend()
-plt.subplot(212)
-plt.scatter(df['age'], df['pets'], label='Pets owned')
-plt.legend()
-plt.show()
+    df = df_from_google_sheet_url(
+        'https://docs.google.com/spreadsheets/d/'
+        '1jMLcMJkVb_lUo5SSyI30lD9rBvtGreZZ2fWKC7dBtOk')
 
-np.corrcoef(df['age'].values, df['party'].values)
-np.corrcoef(df['age'].values, df['pets'].values)    
+    df.describe()
 
-st.t.ppf(.975, df=23)
+    plt.subplot(211)
+    plt.scatter(df['age'], df['party'], label='Time arrived at a party')
+    plt.legend()
+    plt.subplot(212)
+    plt.scatter(df['age'], df['pets'], label='Pets owned')
+    plt.legend()
+    plt.show()
+
+    np.corrcoef(df['age'].values, df['party'].values) # -0.16421413
+    np.corrcoef(df['age'].values, df['pets'].values) # 0.37576461
+
+    st.t.ppf(.975, df=23)
+
+    st.pearsonr(df['age'].values, df['party'].values)
+    # (-0.1642141260655671, 0.20600567570348222)
+    st.pearsonr(df['age'].values, df['pets'].values)
+    # (0.37576461379834125, 0.00284227543344263)
+
+    df = df[['age', 'pets']]
+    df = df.append({'age': 20, 'pets': 8}, ignore_index=True)
+
+    st.pearsonr(df['age'].values, df['pets'].values)
+    # (0.23148091642148155, 0.07025500392476225)
+
