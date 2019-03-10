@@ -110,6 +110,12 @@ def mse(samples):
 def f_statistic(samples):
     return mst(samples) / mse(samples)
 
+def linear_prediction(x, sample_x, sample_y):
+    r, _ = st.pearsonr(sample_x, sample_y)
+    slope = r * sample_y.std(ddof=1) / sample_x.std(ddof=1)
+    intercept = sample_y.mean() - slope * sample_x.mean()
+    return slope * x + intercept
+
 def lesson_6_quiz_16():
     '''
     Quiz 16 | n and DF
@@ -665,4 +671,42 @@ def lesson_17_quiz_X():
     # (0.5893126939325756, 6.309895087810683e-05)
 
     r**2 # 0.3472894512300695
+
+def lesson_18_quiz_6():
+    '''
+    Lesson 18 | Regression
+    '''
+
+    df = df_from_google_sheet_url(
+        'https://docs.google.com/spreadsheets/d/'
+        '1lzV-viazz9pPYkni6ZMsAUr0-v1jDAEDCB3VFzNYHsA')
+
+    distance = df.iloc[:,0]
+    cost = df.iloc[:,1]
+
+    r, p = st.pearsonr(distance, cost)
+    # (0.9090036493537199, 0.0006840064730744001)
+
+    sx = distance.std() # 2315.336824548668
+    sy = cost.std() # 508.1870022879811
+
+    mean_point = distance.mean(), cost.mean()
+    # (2601.1111111111113, 680.3477777777778)
+
+    slope = r * (sy / sx) # 0.1995147465094844
+
+    # y = slope * x + intercept
+    # intercept = y - slope * x
+    intercept = mean_point[1] - slope * mean_point[0]
+    # 161.38775380144114
+
+    slope * 4000 + intercept # 959.4467398393787
+
+    linear_prediction(4000, distance, cost)
+    # 959.4467398393787
+
+    st.linregress(distance, cost)
+
+    (500 - intercept) / slope
+    # 1697.1790412618054
 
