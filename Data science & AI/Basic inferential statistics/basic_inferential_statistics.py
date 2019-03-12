@@ -710,3 +710,47 @@ def lesson_18_quiz_6():
     (500 - intercept) / slope
     # 1697.1790412618054
 
+def lesson_19_quiz_X():
+    '''
+    Lesson 19 | Problem Set 15
+    '''
+    df = df_from_google_sheet_url(
+        'https://docs.google.com/spreadsheets/d/'
+        '1Xl7t5So1OEZRNSR3D_vma_CVHVBX5D64oAFDRr462Sc')
+
+    stem = df.iloc[:,0]
+    activity = df.iloc[:,1]
+
+    plt.scatter(stem, activity)
+    plt.show()
+
+    r, p = st.pearsonr(stem, activity)
+    # (0.934465030624902, 3.401445225552492e-07)
+
+    slope = r * (activity.std() / stem.std())
+    # 0.5722511760457536
+
+    st.linregress(stem, activity)
+
+    r ** 2 # 0.8732248934607991
+
+    y_int = activity.mean() - slope * stem.mean()
+    # -2.2487165973726846
+
+    (70 - y_int) / slope # 126.25350479244125
+    round((0 - y_int) / slope) # 4
+
+    2.35 + .05 * 10 # 2.85
+    2.35 + .05 * 5 # 2.6
+    2.35 + .05 * 0 # 2.35
+    2.35 + .05 * 20 # 3.35
+
+    se = 3.5
+    #t_crit = 1.984
+    #margin_of_error = se * t_crit # 6.759060545297078
+
+    (2.85- se, 2.85 + se) # (6.5, 13.5)
+    (2.6 - se, 2.6 + se) # (1.5, 8.5)
+    (2.35 - se, 2.35 + se) # (-3.5, 3.5)
+    (3.35 - se, 3.35 + se) # (16.5, 23.5)
+      
