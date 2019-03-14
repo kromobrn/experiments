@@ -753,4 +753,26 @@ def lesson_19_quiz_X():
     (2.6 - se, 2.6 + se) # (1.5, 8.5)
     (2.35 - se, 2.35 + se) # (-3.5, 3.5)
     (3.35 - se, 3.35 + se) # (16.5, 23.5)
-      
+
+def lesson_20_quiz_16():
+    '''
+    Lesson 20 | X^2 Tests
+    '''
+
+    n = 100  
+    df = pd.DataFrame({
+        'expected': [33, 67],
+        'observed': [41, 59],
+    })
+
+    df.set_index(
+        pd.Index(['successful', 'unsuccessful']), 
+        inplace=True
+    )
+
+    (((df['observed'] - df['expected']) ** 2) / df['expected']).sum()
+    # 2.8946178199909545
+
+    chi2, p = st.chisquare(df['observed'], df['expected'])
+    # 2.8946178199909545, 0.08887585044058065
+
