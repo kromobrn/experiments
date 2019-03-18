@@ -758,13 +758,12 @@ def lesson_20_quiz_16():
     '''
     Lesson 20 | X^2 Tests
     '''
-
     n = 100  
     df = pd.DataFrame({
         'expected': [33, 67],
         'observed': [41, 59],
     })
-
+    
     df.set_index(
         pd.Index(['successful', 'unsuccessful']), 
         inplace=True
@@ -775,4 +774,19 @@ def lesson_20_quiz_16():
 
     chi2, p = st.chisquare(df['observed'], df['expected'])
     # 2.8946178199909545, 0.08887585044058065
+
+def lesson_21_quiz_X():
+    '''
+    Lesson 20 | Problem Set 16
+    '''
+    st.chisquare([8, 4, 1, 8, 3, 0])
+    # Power_divergenceResult(statistic=14.5, pvalue=0.012726685122400083)
+    st.chi2.ppf(.95, df=5)
+    # 11.070497693516351
+
+    st.chi2.ppf(.95, df=1)
+    # 3.841458820694124
+
+    st.chi2_contingency([[299, 186], [280, 526]], correction=False)
+    # (88.6487963871521, 4.7151344226599645e-21, 1,  ...)
 
